@@ -19,43 +19,101 @@ int numStudents = 0;
 Student* students[100] = {0};
 
 
-void createStudent(char* fname, char* lname, int age, int id)
+void createStudent(char* fname, char* lname, int age, long id)
 {
-  // createStudent dynamically creates a Student on the heap and adds that
-  // student to the student array
-  //  - the firstName and lastName strings should be dynamically created
-  //    based on the size of the fname and lname args
+  Student* st = (Student*)malloc(sizeof(Student));
+
+
+  st->firstname = (char*)malloc((strlen(fname)+1)*sizeof(char));
+  st->lastname = (char*)malloc((strlen(lname)+1)*sizeof(char));
+
+  strcopy(st->firstname, fname);
+  strcopy(st->lastname, lname);
+
+  st->age = age;
+  st->id = id;
+
+
+  students[numStudents] = st;
+  numStudents++;
 }
 
 
 void deleteStudent(Student* student)
 {
-  // free the memory associated with a student including the strings
+  free(st->firstname);
+  free(st->lastname);
+  free(st);
 }
 
 
 void deleteStudents()
 {
-  // iterate over the students array deleting every student and setting te pointer
-  // values to 0 and adjusting the numStudents to 0
+  int it;
+  for (it = 1; it < 100; ++it) {
+    deleteStudent(students[it]);
+    students[it] = 0;
+  }
+
+  numStudents = 0;
 }
 
 
 void saveStudents(int key)
 {
-  // save all students in the student array to a file 'studentdata.txt' overwriting
-  // any existing file
-  //   - the format of the file is one line per student as follows fname lname age id:
-  //       tom thumb 15 1234 
-  //       james dean 21 2345 
-  //       katy jones 18 4532
-  // the best way to do this is to convert the student data to a string using sprintf and then
-  // (optionally) encrypt the whole string before writing it to disk (see cdemo/fileio3.c)
+  FILE *file;
+  file = fopen("studentdata.txt", "w");
+  if (file) {
+    int it;
+    char buff[256];
+    for (it = 1; it < 100; ++it) {
+      Student* st = students[it];
+      sprintf(buff, "%s %s %d %ld", st->firstname, st->lastname, st->age, st->id);
+      
+      if (key != 0) {
+        caesarEncrypt(buff, key);
+      }
+      
+      fprintf(file, "%s\n", buff);
+    }
+    
+    fclose(file);
+  }
 }
 
 
 void loadStudents(int key)
 {
+  if (numStudents > 0) {
+    deleteStudents();
+  }
+  
+  FILE *file;
+  file = fopen("studentdata.txt", "r");
+  if(file) {
+    char b1[256];
+    char b2[256];
+    char b3[256];
+    char b4[256];
+
+    int match = fscanf(file, "%s %s %s %s", b1, b2, b3, b4);
+    if (match == 4) {
+      if (key != 0) {
+        caesarDecrypt(b1, key);
+        caesarDecrypt(b2, key);
+        caesarDecrypt(b3, key);
+        caesarDecrypt(b4, key);
+      }
+    }
+    
+    int age;
+    long id;
+    
+    sscanf(b3, "%d", &age);
+    sscanf(b3, "%ld", &id);
+    
+    createStudent(b1, b2, age, id);
+  }
   // load the students from the data file overwriting all exisiting students in memory
   //  - make sure you first deleteStudents before loading new ones
   //  - when loading it is best to load data into four strings and then (optionally) decrypt the
