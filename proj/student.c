@@ -104,21 +104,16 @@ void loadStudents(int key)
         caesarDecrypt(b3, key);
         caesarDecrypt(b4, key);
       }
+
+      int age;
+      long id;
+
+      sscanf(b3, "%d", &age);
+      sscanf(b3, "%ld", &id);
+
+      createStudent(b1, b2, age, id);
     }
-    
-    int age;
-    long id;
-    
-    sscanf(b3, "%d", &age);
-    sscanf(b3, "%ld", &id);
-    
-    createStudent(b1, b2, age, id);
   }
-  // load the students from the data file overwriting all exisiting students in memory
-  //  - make sure you first deleteStudents before loading new ones
-  //  - when loading it is best to load data into four strings and then (optionally) decrypt the
-  //    strings
-  //  - call createStudent to correctly create the students
 }
 
 
