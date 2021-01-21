@@ -19,16 +19,16 @@ int numStudents = 0;
 Student* students[100] = {0};
 
 
-void createStudent(char* fname, char* lname, int age, long id)
+void createStudent(char* fname, char* lname, int age, int id)
 {
   Student* st = (Student*)malloc(sizeof(Student));
 
 
-  st->firstname = (char*)malloc((strlen(fname)+1)*sizeof(char));
-  st->lastname = (char*)malloc((strlen(lname)+1)*sizeof(char));
+  st->firstName = (char*)malloc((strlen(fname)+1)*sizeof(char));
+  st->lastName = (char*)malloc((strlen(lname)+1)*sizeof(char));
 
-  strcopy(st->firstname, fname);
-  strcopy(st->lastname, lname);
+  strcpy(st->firstName, fname);
+  strcpy(st->lastName, lname);
 
   st->age = age;
   st->id = id;
@@ -41,9 +41,9 @@ void createStudent(char* fname, char* lname, int age, long id)
 
 void deleteStudent(Student* student)
 {
-  free(st->firstname);
-  free(st->lastname);
-  free(st);
+  free(student->firstName);
+  free(student->lastName);
+  free(student);
 }
 
 
@@ -68,7 +68,7 @@ void saveStudents(int key)
     char buff[256];
     for (it = 1; it < 100; ++it) {
       Student* st = students[it];
-      sprintf(buff, "%s %s %d %ld", st->firstname, st->lastname, st->age, st->id);
+      sprintf(buff, "%s %s %d %ld", st->firstName, st->lastName, st->age, st->id);
       
       if (key != 0) {
         caesarEncrypt(buff, key);
