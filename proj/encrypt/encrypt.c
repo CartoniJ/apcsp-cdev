@@ -3,7 +3,6 @@
 //
 
 #include <string.h>
-
 #include "encrypt.h"
 
 
@@ -53,7 +52,6 @@ void encrypt(char str[], int shifts[], int shiftslen)
   for (int i = 0; i < strlen(str); i++) 
   {
     char c = str[i];
-
     str[i] = shiftChar(c, shifts[i%shiftslen], 1);
   }
 }

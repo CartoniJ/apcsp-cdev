@@ -61,14 +61,32 @@ void saveStudents(int key)
 
   fp = fopen(STUFILE, "w");
   if(fp) {
-    char buff[256];
+    char buff[1024];
+    char b1[128];
+    char b2[128];
+    char b3[128];
+    char b4[128];
+
     for (int i = 0; i < numStudents; i++) {
       Student* st = students[i];
-      sprintf(buff, "%s %s %d %ld", st->firstName, st->lastName, st->age, st->id);
+      sprintf(b1, "%s", st->firstName);
+      sprintf(b2, "%s", st->lastName);
+      sprintf(b3, "%d", st->age);
+      sprintf(b4, "%ld", st->id);
 
       if (key != 0) {
-        caesarEncrypt(buff, key);
+        caesarEncrypt(b1, key);
+        caesarEncrypt(b2, key);
+        caesarEncrypt(b3, key);
+        caesarEncrypt(b4, key);
       }
+
+      int age;
+      long id;
+      sscanf(b3, "%d", &age);
+      sscanf(b4, "%ld", &id);
+
+      sprintf(buff, "%s %s %d %ld", b1, b2, age, id);
 
       fprintf(fp, "%s\n", buff);
     }
@@ -88,26 +106,32 @@ void loadStudents(int key)
 
   fp = fopen(STUFILE, "r");
   if(fp) {
-    char b1[256];
-    char b2[256];
-    char b3[256];
-    char b4[256];
+    while (1) {
+      char b1[256];
+      char b2[256];
+      char b3[256];
+      char b4[256];
 
-    int match = fscanf(fp, "%s %s %s %s", b1, b2, b3, b4);
-    if (match == 4) {
-      if (key != 0) {
-        caesarDecrypt(b1, key);
-        caesarDecrypt(b2, key);
-        caesarDecrypt(b3, key);
-        caesarDecrypt(b4, key);
+      int match = fscanf(fp, "%s %s %s %s", b1, b2, b3, b4);
+      if (match == 4) {
+        if (key != 0) {
+          caesarDecrypt(b1, key);
+          caesarDecrypt(b2, key);
+          caesarDecrypt(b3, key);
+          caesarDecrypt(b4, key);
+        }
+
+        int age;
+        long id;
+        sscanf(b3, "%d", &age);
+        sscanf(b4, "%ld", &id);
+
+        createStudent(b1, b2, age, id);
       }
-
-      int age;
-      long id;
-      sscanf(b3, "%d", &age);
-      sscanf(b4, "%ld", &id);
-
-      createStudent(b1, b2, age, id);
+      else {
+        fclose(fp);
+        break;
+      }
     }
   }
 }
